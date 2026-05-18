@@ -8,6 +8,8 @@ test.use({
 
 test('Entry semua data pending', async ({ page }) => {
 
+  test.setTimeout(30 * 60 * 1000)
+
   // =========================
   // LOGIN
   // =========================
