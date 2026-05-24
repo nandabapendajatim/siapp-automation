@@ -1,11 +1,17 @@
 const db = require('../database/db')
 
-async function entrySk(page, pegawaiId) {
+const {
+  nowJakarta
+} = require('../services/utils/date')
+
+async function entrySk(page, pegawaiId, batchId) {
 
   console.log('')
   console.log('=========================')
   console.log('ENTRY SK')
   console.log('=========================')
+  console.log('')
+  console.log('BATCH ID:', batchId)
 
   const datas = db.prepare(`
     SELECT *
@@ -13,7 +19,11 @@ async function entrySk(page, pegawaiId) {
     WHERE
       pegawai_id = ?
       AND status_proses = 'pending'
-  `).all(pegawaiId)
+      AND batch_id = ?
+  `).all(
+    pegawaiId,
+    batchId
+  )
 
   console.log('Total SK:', datas.length)
 
@@ -53,6 +63,14 @@ async function entrySk(page, pegawaiId) {
         nontp: data.no_entri
       }
 
+    } else if (data.jenis_surat === 'ETULNTP') {
+
+      url = 'https://siapp.dipendajatim.go.id/proses/saveNTP.php'
+
+      payload = {
+        nontp: data.no_entri
+      }
+
     }
 
     try {
@@ -84,11 +102,12 @@ async function entrySk(page, pegawaiId) {
         SET
           status_proses = ?,
           response_siapp = ?,
-          processed_at = datetime('now')
+          processed_at = ?
         WHERE id = ?
       `).run(
         statusProses,
         result,
+        nowJakarta(),
         data.id
       )
 
