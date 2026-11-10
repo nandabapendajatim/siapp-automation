@@ -16,6 +16,7 @@ ORDER BY sk_data.nopol ASC;
 
 /* QUERY SELECT PEGAWAI */
 SELECT * FROM pegawai;
+UPDATE pegawai set aktif = 1 where nip = '196806052008011018'
 
 /* QUERY RANDOM URUTAN PEGAWAI */
 -- di jalankan setiap hari sebelum melakukan proses automation
@@ -37,6 +38,22 @@ WHERE aktif = 1;
 /*SQLITE VERSION*/
 SELECT sqlite_version();
 
+/*QUERY CEK JUMLAH SK PER WILAYAH DALAM 1 HARI CETAK*/
+SELECT a.kecamatan, a.desa, COUNT(a.no_entri) as total_sk  FROM sk_data a
+WHERE a.batch_id in ('20260524_170445', '20260524_172248', '20260525_072048', '20260525_124200', '20260526_045801', '20260526_045801')
+GROUP BY a.kecamatan, a.desa
+ORDER BY a.kecamatan, total_sk DESC
+
+SELECT a.kecamatan, COUNT(a.no_entri) as total_sk  FROM sk_data a
+WHERE a.batch_id in ('20260524_170445', '20260524_172248', '20260525_072048', '20260525_124200', '20260526_045801', '20260526_045801')
+GROUP BY a.kecamatan
+ORDER BY total_sk DESC
+
+SELECT COUNT(DISTINCT desa) as total_desa  FROM sk_data a
+WHERE a.batch_id in ('20260524_170445', '20260524_172248', '20260525_072048', '20260525_124200', '20260526_045801', '20260526_045801')
+GROUP BY a.desa
+ORDER BY total_sk DESC
+
 
 /* QUERY LAIN LAIN */
 ALTER TABLE sk_data
@@ -53,4 +70,71 @@ ON sk_data(status_proses, batch_id);
 CREATE INDEX IF NOT EXISTS idx_sk_pegawai_batch
 ON sk_data(pegawai_id, batch_id);
 
+DROP INDEX idx_sk_batch;
+DROP INDEX idx_sk_status_batch;
+DROP INDEX idx_sk_pegawai_batch;
+
 PRAGMA index_list('sk_data');
+
+/* MIGRASI TABEL SK DATA */
+ALTER TABLE sk_data
+RENAME TO sk_data_old;
+
+CREATE TABLE sk_data (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    no_entri TEXT,
+    nopol TEXT,
+    nama TEXT,
+    desa TEXT,
+    kecamatan TEXT,
+    potensi TEXT,
+    tgl_cetak TEXT,
+    jenis_surat TEXT,
+
+    pegawai_id INTEGER,
+    batch_id TEXT,
+
+    status_proses TEXT DEFAULT 'pending',
+    response_siapp TEXT,
+
+    processed_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE(no_entri, jenis_surat)
+);
+
+INSERT INTO sk_data (
+    id,
+    no_entri,
+    nopol,
+    nama,
+    desa,
+    kecamatan,
+    potensi,
+    tgl_cetak,
+    jenis_surat,
+    pegawai_id,
+    batch_id,
+    status_proses,
+    response_siapp,
+    processed_at,
+    created_at
+)
+SELECT
+    id,
+    no_entri,
+    nopol,
+    nama,
+    desa,
+    kecamatan,
+    potensi,
+    tgl_cetak,
+    jenis_surat,
+    pegawai_id,
+    batch_id,
+    status_proses,
+    response_siapp,
+    processed_at,
+    created_at
+FROM sk_data_old;

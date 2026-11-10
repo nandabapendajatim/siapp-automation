@@ -248,7 +248,7 @@ async function distributeSk(batchId) {
 
           WHEN sk_data.kecamatan = 'TANJUNG BUMI' AND sk_data.desa = 'DS PLANGGIRAN' THEN 116
           WHEN sk_data.kecamatan = 'TANJUNG BUMI' AND sk_data.desa = 'DS TAGUNGGUH' THEN 117
-          WHEN sk_data.kecamatan = 'TANJUNG BUMI' AND sk_data.desa = 'DS BANDANG DAJAH' THEN 118
+          WHEN sk_data.kecamatan = 'TANJUNG BUMI' AND sk_data.desa = 'DS BANDANG DAJA''' THEN 118
           WHEN sk_data.kecamatan = 'TANJUNG BUMI' AND sk_data.desa = 'DS BUNGKENG' THEN 119
           WHEN sk_data.kecamatan = 'TANJUNG BUMI' AND sk_data.desa = 'DS LARANGAN TIMUR' THEN 120
           WHEN sk_data.kecamatan = 'TANJUNG BUMI' AND sk_data.desa = 'DS TAMBAK POCOK' THEN 121
@@ -351,7 +351,7 @@ async function distributeSk(batchId) {
 
           WHEN sk_data.kecamatan = 'BLEGA' AND sk_data.desa = 'DS PANJALINAN' THEN 213
           WHEN sk_data.kecamatan = 'BLEGA' AND sk_data.desa = 'DS PANGERAN GDNGN' THEN 214
-          WHEN sk_data.kecamatan = 'BLEGA' AND sk_data.desa = 'DS KO''OLAN' THEN 215
+          WHEN sk_data.kecamatan = 'BLEGA' AND REPLACE(sk_data.desa, '\`', '''') = 'DS KO''OLAN' THEN 215
           WHEN sk_data.kecamatan = 'BLEGA' AND sk_data.desa = 'DS KANPAO' THEN 216
           WHEN sk_data.kecamatan = 'BLEGA' AND sk_data.desa = 'DS GIGIR' THEN 217
           WHEN sk_data.kecamatan = 'BLEGA' AND sk_data.desa = 'DS LOMBANG DAJAH' THEN 218
@@ -378,7 +378,7 @@ async function distributeSk(batchId) {
           WHEN sk_data.kecamatan = 'MODUNG' AND sk_data.desa = 'DS SRABI BARAT' THEN 238
           WHEN sk_data.kecamatan = 'MODUNG' AND sk_data.desa = 'DS PATENGTENG' THEN 239
           WHEN sk_data.kecamatan = 'MODUNG' AND sk_data.desa = 'DS LANGPANGGANG' THEN 240
-          WHEN sk_data.kecamatan = 'MODUNG' AND sk_data.desa = 'DS SUWA''AN' THEN 241
+          WHEN sk_data.kecamatan = 'MODUNG' AND REPLACE(sk_data.desa, '\`', '''') = 'DS SUWA''AN' THEN 241
           WHEN sk_data.kecamatan = 'MODUNG' AND sk_data.desa = 'DS MODUNG' THEN 242
           WHEN sk_data.kecamatan = 'MODUNG' AND sk_data.desa = 'DS BRAKAS DAJAH' THEN 243
           WHEN sk_data.kecamatan = 'MODUNG' AND sk_data.desa = 'DS KARANGANYAR' THEN 244

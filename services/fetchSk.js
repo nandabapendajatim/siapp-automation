@@ -7,10 +7,30 @@ const {
 } = require('../services/utils/date')
 
 // =========================
+// BATAS PKB MOBIL KHUSUS
+// =========================
+
+const BATAS_PKB_MOBIL = 1000000
+
+// =========================
+// PARSE PKB
+// =========================
+
+function parsePKB(pkb) {
+
+  return Number(
+    String(pkb)
+      .replace(/\./g, '')
+      .trim()
+  )
+
+}
+
+// =========================
 // CEK MOTOR / MOBIL
 // =========================
 
-function isMotor(nopol) {
+function isMotor(nopol, pkb) {
 
   // ambil angka dari nopol
   const angka = nopol.match(/\d+/)
@@ -23,9 +43,27 @@ function isMotor(nopol) {
   // ambil digit pertama
   const firstDigit = angka[0][0]
 
-  // motor = 2-6
-  return ['2', '3', '4', '5', '6']
-    .includes(firstDigit)
+  // digit awal mobil
+  if (['0', '1', '7', '8', '9'].includes(firstDigit)) {
+    return false
+  }
+
+  // digit awal motor
+  if (['2', '3', '4', '5', '6'].includes(firstDigit)) {
+
+    const nilaiPKB =
+      parsePKB(pkb)
+
+    // mobil plat khusus
+    if (nilaiPKB > BATAS_PKB_MOBIL) {
+      return false
+    }
+
+    return true
+
+  }
+
+  return false
 
 }
 
@@ -66,8 +104,8 @@ async function fetchSk(page, batchId) {
       'https://siapp.dipendajatim.go.id/view/vbEntri.php',
       {
         form: {
-          tgcetak: '01/05/2026',
-          tgcetak2: '31/05/2026',
+          tgcetak: '01/11/2026',
+          tgcetak2: '30/11/2026',
           jns_surat: jenisSurat,
           status: '1'
         }
@@ -110,25 +148,11 @@ async function fetchSk(page, batchId) {
       const nopol =
         $(cols[2]).text().trim()
 
-      // =========================
-      // FILTER R2 / R3
-      // =========================
-
-      if (!isMotor(nopol)) {
-
-        console.log(
-          'Skip R4:',
-          nopol
-        )
-
-        return
-
-      }
-
-      const namaAlamat = $(cols[3])
-        .text()
-        .trim()
-        .split('\n')
+      const namaAlamat =
+        $(cols[3])
+          .text()
+          .trim()
+          .split('\n')
 
       const nama =
         namaAlamat[0]?.trim() || ''
@@ -141,6 +165,23 @@ async function fetchSk(page, batchId) {
 
       const potensi =
         $(cols[6]).text().trim()
+
+      // =========================
+      // FILTER R2 / R3
+      // =========================
+
+      if (!isMotor(nopol, potensi)) {
+
+        console.log(
+          'Skip Mobil:',
+          nopol,
+          '- PKB:',
+          potensi
+        )
+
+        return
+
+      }
 
       const tgl_cetak =
         $(cols[7]).text().trim()
@@ -198,14 +239,15 @@ async function fetchSk(page, batchId) {
 
       } catch (err) {
 
-        // duplicate data
         if (
           err.message.includes('UNIQUE')
         ) {
 
           console.log(
             'Skip duplicate:',
-            no_entri
+            no_entri,
+            '-',
+            jenisSurat
           )
 
         } else {

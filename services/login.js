@@ -4,9 +4,12 @@ async function login(page, account) {
   console.log('LOGIN:', account.nama)
   console.log('=========================')
 
-  await page.goto('https://siapp.dipendajatim.go.id')
-
-  await page.waitForTimeout(3000)
+  await page.goto(
+    'https://siapp.dipendajatim.go.id',
+    {
+      waitUntil: 'networkidle'
+    }
+  )
 
   // isi kode samsat
   await page.fill(
@@ -30,7 +33,9 @@ async function login(page, account) {
   await page.getByRole('button', { name: /login/i }).click()
 
   // tunggu login selesai
-  await page.waitForTimeout(5000)
+  await page.waitForLoadState(
+    'networkidle'
+  )
 
   console.log('LOGIN BERHASIL')
 

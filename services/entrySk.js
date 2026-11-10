@@ -120,7 +120,7 @@ async function entrySk(page, pegawaiId, batchId) {
     }
 
     // delay
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(100)
 
   }
 

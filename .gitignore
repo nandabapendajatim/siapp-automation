@@ -8,3 +8,5 @@ download
 .env
 
 database.sqlite
+query-data.sql
+query-table.sql

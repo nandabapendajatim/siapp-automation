@@ -2,25 +2,8 @@ const XLSX = require('xlsx')
 
 const db = require('./database/db')
 
-// =========================
-// AMBIL DATA
-// =========================
-
-// const rows = db.prepare(`
-//  SELECT
-//   sk_data.id,
-//   sk_data.jenis_surat,
-//   sk_data.nopol,
-//   pegawai.nama AS nama_pegawai,
-//   sk_data.no_entri,
-//   sk_data.kecamatan,
-//   sk_data.desa
-// FROM sk_data
-// LEFT JOIN pegawai
-//   ON pegawai.id = sk_data.pegawai_id
-// WHERE sk_data.pegawai_id IS NOT NULL AND date(sk_data.created_at) = '2026-05-19'
-// ORDER BY sk_data.jenis_surat, sk_data.nopol ASC
-// `).all()
+const batchId =
+process.argv[2]
 
 const rows = db.prepare(`
  SELECT
@@ -35,7 +18,7 @@ FROM sk_data
 LEFT JOIN pegawai
   ON pegawai.id = sk_data.pegawai_id
 WHERE sk_data.pegawai_id IS NOT NULL
-  AND date(sk_data.created_at) = '2026-05-24'
+  AND sk_data.batch_id =?
 
 ORDER BY
 
@@ -168,7 +151,7 @@ ORDER BY
 
   WHEN sk_data.kecamatan = 'TANJUNG BUMI' AND sk_data.desa = 'DS PLANGGIRAN' THEN 116
   WHEN sk_data.kecamatan = 'TANJUNG BUMI' AND sk_data.desa = 'DS TAGUNGGUH' THEN 117
-  WHEN sk_data.kecamatan = 'TANJUNG BUMI' AND sk_data.desa = 'DS BANDANG DAJAH' THEN 118
+  WHEN sk_data.kecamatan = 'TANJUNG BUMI' AND sk_data.desa = 'DS BANDANG DAJA''' THEN 118
   WHEN sk_data.kecamatan = 'TANJUNG BUMI' AND sk_data.desa = 'DS BUNGKENG' THEN 119
   WHEN sk_data.kecamatan = 'TANJUNG BUMI' AND sk_data.desa = 'DS LARANGAN TIMUR' THEN 120
   WHEN sk_data.kecamatan = 'TANJUNG BUMI' AND sk_data.desa = 'DS TAMBAK POCOK' THEN 121
@@ -271,7 +254,7 @@ ORDER BY
 
   WHEN sk_data.kecamatan = 'BLEGA' AND sk_data.desa = 'DS PANJALINAN' THEN 213
   WHEN sk_data.kecamatan = 'BLEGA' AND sk_data.desa = 'DS PANGERAN GDNGN' THEN 214
-  WHEN sk_data.kecamatan = 'BLEGA' AND sk_data.desa = 'DS KO''OLAN' THEN 215
+  WHEN sk_data.kecamatan = 'BLEGA' AND REPLACE(sk_data.desa, '\`', '''') = 'DS KO''OLAN' THEN 215
   WHEN sk_data.kecamatan = 'BLEGA' AND sk_data.desa = 'DS KANPAO' THEN 216
   WHEN sk_data.kecamatan = 'BLEGA' AND sk_data.desa = 'DS GIGIR' THEN 217
   WHEN sk_data.kecamatan = 'BLEGA' AND sk_data.desa = 'DS LOMBANG DAJAH' THEN 218
@@ -298,7 +281,7 @@ ORDER BY
   WHEN sk_data.kecamatan = 'MODUNG' AND sk_data.desa = 'DS SRABI BARAT' THEN 238
   WHEN sk_data.kecamatan = 'MODUNG' AND sk_data.desa = 'DS PATENGTENG' THEN 239
   WHEN sk_data.kecamatan = 'MODUNG' AND sk_data.desa = 'DS LANGPANGGANG' THEN 240
-  WHEN sk_data.kecamatan = 'MODUNG' AND sk_data.desa = 'DS SUWA''AN' THEN 241
+  WHEN sk_data.kecamatan = 'MODUNG' AND REPLACE(sk_data.desa, '\`', '''') = 'DS SUWA''AN' THEN 241
   WHEN sk_data.kecamatan = 'MODUNG' AND sk_data.desa = 'DS MODUNG' THEN 242
   WHEN sk_data.kecamatan = 'MODUNG' AND sk_data.desa = 'DS BRAKAS DAJAH' THEN 243
   WHEN sk_data.kecamatan = 'MODUNG' AND sk_data.desa = 'DS KARANGANYAR' THEN 244
@@ -347,7 +330,7 @@ ORDER BY
 END ASC,
 nopol ASC
 
-`).all()
+`).all(batchId)
 
 // =========================
 // BUAT SHEET
@@ -367,22 +350,38 @@ XLSX.utils.book_append_sheet(
 // EXPORT EXCEL
 // =========================
 
-const date = new Date();
-const day = String(date.getDate()).padStart(2, '0');
-const month = String(date.getMonth() + 1).padStart(2, '0');
-const year = date.getFullYear();
-const hours = String(date.getHours()).padStart(2, '0');
-const minutes = String(date.getMinutes()).padStart(2, '0');
+const path = require('path')
 
-const fileName = `hasil-sk_${day}-${month}-${year}_${hours}-${minutes}.xlsx`;
+const date = new Date()
 
-// Hasil: hasil-sk_27-10-2023_14-30.xlsx
-XLSX.writeFile(workbook, fileName);
+const day = String(
+  date.getDate()
+).padStart(2, '0')
 
+const month = String(
+  date.getMonth() + 1
+).padStart(2, '0')
 
-// XLSX.writeFile(
-//   workbook,
-//   'hasil-sk.xlsx'
-// )
+const year = date.getFullYear()
+
+const hours = String(
+  date.getHours()
+).padStart(2, '0')
+
+const minutes = String(
+  date.getMinutes()
+).padStart(2, '0')
+
+const fileName =
+  `hasil-sk_${day}-${month}-${year}_${hours}-${minutes}.xlsx`
+
+const filePath = path.join(
+  __dirname,
+  './download',
+  fileName
+)
+
+XLSX.writeFile(workbook, filePath)
 
 console.log('Export berhasil!')
+console.log('Lokasi file:', filePath)

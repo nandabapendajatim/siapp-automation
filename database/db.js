@@ -9,7 +9,7 @@ const db = new Database('database.sqlite')
 db.exec(`
   CREATE TABLE IF NOT EXISTS sk_data (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    no_entri TEXT UNIQUE,
+    no_entri TEXT,
     nopol TEXT,
     nama TEXT,
     desa TEXT,
@@ -21,7 +21,9 @@ db.exec(`
     status_proses TEXT DEFAULT 'pending',
     response_siapp TEXT,
     processed_at DATETIME,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE(no_entri, jenis_surat)
   )
 `)
 

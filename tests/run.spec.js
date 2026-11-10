@@ -81,7 +81,7 @@ test('Run Automation SIAPP', async ({ page }) => {
     'https://siapp.dipendajatim.go.id/logout.php'
   )
 
-  await page.waitForTimeout(3000)
+  await page.waitForLoadState('networkidle')
 
   // =========================
   // AMBIL SEMUA PEGAWAI AKTIF
@@ -138,7 +138,7 @@ test('Run Automation SIAPP', async ({ page }) => {
       'https://siapp.dipendajatim.go.id/logout.php'
     )
 
-    await page.waitForTimeout(3000)
+    await page.waitForLoadState('networkidle')
 
   }
 
