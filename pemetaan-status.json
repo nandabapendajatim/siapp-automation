@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "tahap": "selesai",
+  "pesan": "Seluruh proses Pemetaan berhasil diselesaikan.",
+  "run_id": 13,
+  "statistik": {
+    "totalDiambil": 7488,
+    "dalamPeriode": 715,
+    "sudahDL": 254,
+    "belumDL": 461,
+    "berhasilDipetakan": 461,
+    "tidakTeridentifikasi": 0,
+    "spos": 111,
+    "npp": 89,
+    "ntp": 261
+  },
+  "updated_at": "2026-11-14T00:39:25.452Z",
+  "finished_at": "2026-11-14T00:39:25.452Z"
+}

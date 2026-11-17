@@ -34,6 +34,7 @@ if (
   <link
     rel="stylesheet"
     href="assets/css/app.css">
+  <link rel="stylesheet" href="assets/css/dashboard.css?v=1">
 
   <style>
     body {

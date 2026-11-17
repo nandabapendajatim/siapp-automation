@@ -90,7 +90,7 @@ function parseMonitoring(
 
         const matchWilayah =
             wilayah.match(
-                /KEC (.*?) DS (.*)/i
+                /KEC\.?\s+(.+?)\s+(?:DS|KEL)\.?\s+(.+)/i
             )
 
         if (matchWilayah) {
@@ -262,11 +262,11 @@ function parseMonitoring(
             umur_hari: umurHari,
 
             perlu_reminder: kategoriReminder !== null,
-            
+
             warna_row: $(row).attr('class') || '',
 
             kategori_reminder: kategoriReminder,
-            
+
             sisa_hari: sisaHari,
 
             prioritas: prioritas
